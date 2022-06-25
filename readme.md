@@ -26,13 +26,12 @@ Define a script that serves as the entrypoint to kick off the Kaniko build:
 $ cat << EOF > kaniko-entrypoint.sh
 #!/bin/sh
 
-# Log into Artifactory so we can push to it.
-/kaniko/kaniq auth my.jfrog.io $ARTIFACTORY_USER $ARTIFACTORY_PASWORD
-
-# Expose the same credentials to the Docker build as secrets.
-/kaniko/kaniq execute --secret ARTIFACTORY_USER --secret ARTIFACTORY_PASSWORD \
+/kaniko/kaniq execute \
+    --auth my.jfrog.io $ARTIFACTORY_USER $ARTIFACTORY_PASSWORD \
+    --secret ARTIFACTORY_USER \
+    --secret ARTIFACTORY_PASSWORD \
     --cache=true --cache-copy-layers \
-    --destination my.jfrog.io/docker/my-project:latest 
+    --destination my.jfrog.io/docker/my-project:latest
 
 EOF
 $ chmod +x kaniko-entrypoint.sh
@@ -42,9 +41,8 @@ Kick off the Kaniko build locally:
 
 ```
 $ export ARTIFACTORY_USER=... ARTIFACTORY_PASSWORD=...
-# Run the Kaniko build, exporting your entire environment to the Kaniko container
-# such that they are accessible by your entrypoint script.
-$ kaniq run --env-all kaniko-entrypoint.sh 
+# Run the Kaniko build, including the two environment variables for your entrypoint script.
+$ kaniq run --env ARTIFACTORY_USER,ARTIFACTORY_PASSWORD kaniko-entrypoint.sh 
 ```
 
 Example for Gitlab CI:

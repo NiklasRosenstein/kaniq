@@ -11,6 +11,11 @@ pub struct ExecuteArgs {
     #[clap(long)]
     secret: Vec<String>,
 
+    /// Set up credentials for a Docker registry. This is a shorthand to using the `kaniq auth` command.
+    /// The argument can be specified multiple times.
+    #[clap(long, number_of_values = 3, multiple = true)]
+    auth: Vec<String>,
+
     /// Enable verbose output.
     #[clap(long, short)]
     verbose: bool,
@@ -20,6 +25,16 @@ pub struct ExecuteArgs {
 }
 
 pub fn run(args: ExecuteArgs) {
+    crate::auth::run(
+        args.auth
+            .chunks(3)
+            .map(|auth| crate::auth::AuthArgs {
+                registry: auth[0].clone(),
+                username: auth[1].clone(),
+                password: auth[2].clone(),
+            })
+            .collect(),
+    );
     if !std::path::Path::new(KANIKO_SECRETS_DIR).is_dir() {
         std::fs::create_dir(KANIKO_SECRETS_DIR)
             .expect(format!("could not create directory {}", KANIKO_SECRETS_DIR).as_str());
