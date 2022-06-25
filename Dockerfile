@@ -1,4 +1,4 @@
-FROM rust:alpine as kaniq
+FROM rust:alpine as build
 RUN apk add musl-dev
 WORKDIR /kaniq
 COPY kaniq/ ./
@@ -8,4 +8,4 @@ RUN --mount=type=cache,dst=/root/.cargo/ --mount=type=cache,dst=./target/ : \
     && cp target/release/kaniq /usr/local/bin/kaniq
 
 FROM gcr.io/kaniko-project/executor:debug as kaniq
-COPY --from=kaniq /usr/local/bin/kaniq /kaniko/kaniq
+COPY --from=build /usr/local/bin/kaniq /kaniko/kaniq

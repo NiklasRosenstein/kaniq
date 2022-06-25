@@ -50,7 +50,7 @@ pub fn run(args: ExecuteArgs) {
         .iter()
         .for_each(|(key, value)| {
             let secret_path = std::path::Path::new(KANIKO_SECRETS_DIR).join(key);
-            println!("[kaniq] create secret {:?}", secret_path);
+            println!("[kaniq execute] create secret {:?}", secret_path);
             std::fs::write(secret_path, value).unwrap();
         });
     let mut command = std::process::Command::new(KANIKO_EXECUTOR);
@@ -61,7 +61,7 @@ pub fn run(args: ExecuteArgs) {
             command.args(vec!["--env".to_string(), format!("{}={}", key, value)]);
         });
     if args.verbose {
-        println!("[kaniq] executing command {:?}", command);
+        println!("[kaniq execute] executing command {:?}", command);
     }
     command
         .spawn()

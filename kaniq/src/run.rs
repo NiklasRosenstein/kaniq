@@ -77,7 +77,7 @@ pub fn run(args: RunArgs) {
     ]);
     command.args(args.argv);
     if args.verbose {
-        println!("[kaniq] executing command {:?}", command)
+        println!("[kaniq run    ] executing command {:?}", command)
     }
     command
         .spawn()
