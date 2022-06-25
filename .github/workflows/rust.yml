@@ -24,9 +24,9 @@ jobs:
     - name: Build
       run: cd kaniq && cargo build --verbose --release
 
-    - run: echo "::set-output value=$(git describe --tags)"
+    - run: echo "::set-output name=value::$(git describe --tags)"
       id: git_version
-    - run: echo "::set-output value=$(uname)-$(arch)"
+    - run: echo "::set-output name=value::$(uname)-$(arch)"
       id: os
 
     # - name: Run tests

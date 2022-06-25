@@ -25,7 +25,7 @@ jobs:
         username: ${{ github.actor }}
         password: ${{ secrets.GITHUB_TOKEN }}
 
-    - run: echo "::set-output value=$(git describe --tags)"
+    - run: echo "::set-output name=value::$(git describe --tags)"
       id: git_version
 
     - uses: docker/build-push-action@v3.0.0
