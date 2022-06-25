@@ -11,6 +11,10 @@ pub struct ExecuteArgs {
     #[clap(long)]
     secret: Vec<String>,
 
+    /// Enable verbose output.
+    #[clap(long, short)]
+    verbose: bool,
+
     /// Remaining args for the executor.
     argv: Vec<String>,
 }
@@ -26,12 +30,15 @@ pub fn run(args: ExecuteArgs) {
             None => panic!("bad value of --secret option: {}", secret),
             Some((key, value)) => {
                 let secret_path = std::path::Path::new(KANIKO_SECRETS_DIR).join(key);
-                println!("create secret {:?}", secret_path);
+                println!("[kaniq] create secret {:?}", secret_path);
                 std::fs::write(secret_path, value).unwrap();
             }
         });
     let mut command = std::process::Command::new(KANIKO_EXECUTOR);
     command.args(args.argv);
+    if args.verbose {
+        println!("[kaniq] executing command {:?}", command);
+    }
     command
         .spawn()
         .expect("failed to spawn kaniko executor")

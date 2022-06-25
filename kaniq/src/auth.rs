@@ -29,7 +29,7 @@ pub fn run(args: AuthArgs) {
     if registry.contains("/") {
         registry = String::from(registry.split_once("/").unwrap().0);
         println!(
-            "note: using registry name \"{}\" from full argument \"{}\"",
+            "[kaniq] note: using registry name \"{}\" from full argument \"{}\"",
             registry, args.registry
         );
     }
@@ -38,6 +38,7 @@ pub fn run(args: AuthArgs) {
         auth: base64::encode(format!("{}:{}", args.username, args.password.as_str())),
     };
 
+    println!("[kaniq] write {}", KANIKO_DOCKER_CONFIG_FILE);
     std::fs::write(KANIKO_DOCKER_CONFIG_FILE, data.dump())
         .expect(format!("unable to write to file {}", KANIKO_DOCKER_CONFIG_FILE).as_str());
 }

@@ -10,20 +10,24 @@ static KANIKO_IMAGE: &'static str = "ghcr.io/niklasrosenstein/kaniq:latest";
 #[derive(clap::Parser)]
 #[clap(setting = clap::AppSettings::TrailingVarArg)]
 pub struct RunArgs {
-    /// Specify an environment variable in the Kaniko container. If only the variable
-    /// name is specified and no value is assigned (as indicated by the presence of
-    /// an equal sign followed by 0 or more characters), the variable is read from your
-    /// current environment. It is an error if the variable does not exist in your
-    /// environment.
+    /// Export one or more environment variables to the Kaniko container. The value for this
+    /// option can take three forms: 1) `KEY=VALUE`, 2) `KEY`, 3) `KEY1,KEY2,KEY3`. In the
+    /// first form, the variable and value are passed as is. In the second form, the value
+    /// for environment variable `KEY` is looked up in your current environment. The third
+    /// form is functionally similar than the second, but can accept multiple variable names.
     #[clap(long)]
     env: Vec<String>,
 
-    /// The Kaniko image to use.
+    /// The Docker image to use.
     #[clap(long, default_value = KANIKO_IMAGE)]
     image: String,
 
-    /// The command to run inside the Kaniko container. Often this is just a call to
-    /// "/kaniko/kaniku execute" to kick off the Kaniko executor.
+    /// Enable verbose output.
+    #[clap(long, short)]
+    verbose: bool,
+
+    /// The command to run inside the Kaniko container. Usually you would pass a script that
+    /// sets up the authentication and kicks off the Kaniko executor via `kaniq execute`.
     argv: Vec<String>,
 }
 
@@ -33,16 +37,24 @@ pub fn run(args: RunArgs) {
         .iter()
         .flat_map(|env| -> Vec<String> {
             match env.split_once("=") {
+                // Normal key=value pair.
                 Some((_, _)) => vec!["--env".to_string(), env.clone()],
-                None => vec![
-                    "--env".to_string(),
-                    format!(
-                        "{}={}",
-                        env.clone(),
-                        std::env::var(env)
-                            .expect(format!("env variable {} is not set", env).as_str())
-                    ),
-                ],
+                // One or more variable names to export from the current environment.
+                None => env
+                    .split(',')
+                    .skip_while(|x| x.is_empty())
+                    .flat_map(|key| -> Vec<String> {
+                        vec![
+                            "--env".to_string(),
+                            format!(
+                                "{}={}",
+                                key.clone(),
+                                std::env::var(key)
+                                    .expect(format!("env variable {} is not set", key).as_str())
+                            ),
+                        ]
+                    })
+                    .collect(),
             }
         })
         .collect();
@@ -63,6 +75,9 @@ pub fn run(args: RunArgs) {
         args.image.as_str(),
     ]);
     command.args(args.argv);
+    if args.verbose {
+        println!("[kaniq] executing command {:?}", command)
+    }
     command
         .spawn()
         .expect("failed to spawn docker command")
