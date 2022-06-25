@@ -34,5 +34,5 @@ jobs:
 
     - uses: actions/upload-artifact@v3.1.0
       with:
-        name: kaniq-${{ steps.os.value }}-${{ steps.git_version.value }}
+        name: kaniq-${{ steps.os.outputs.value }}-${{ steps.git_version.outputs.value }}
         path: kaniq/target/release/kaniq
