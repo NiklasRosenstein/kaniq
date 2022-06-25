@@ -1,0 +1,26 @@
+name: Rust
+
+on:
+  push:
+    branches: [ "develop" ]
+  pull_request:
+    branches: [ "develop" ]
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+    - name: Build
+      run: cd kaniq && cargo build --verbose --release
+    # - name: Run tests
+    #   run: cd kaniq && cargo test --verbose
+    - uses: actions/upload-artifact@v3.1.0
+      with:
+        name: kaniq_$(uname)_$(arch)
+        path: kaniq/target/release/kaniq
