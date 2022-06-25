@@ -11,9 +11,10 @@ env:
 
 jobs:
   build:
-
-    runs-on: ubuntu-latest
-
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
     steps:
     - uses: actions/checkout@v3
     - name: Build
@@ -22,5 +23,5 @@ jobs:
     #   run: cd kaniq && cargo test --verbose
     - uses: actions/upload-artifact@v3.1.0
       with:
-        name: kaniq_$(uname)_$(arch)
+        name: kaniq-${{ matrix.os }}
         path: kaniq/target/release/kaniq
