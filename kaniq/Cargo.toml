@@ -1,0 +1,11 @@
+[package]
+name = "kaniq"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+base64 = "0.13.0"
+clap = { version = "3.2.6", features = ["derive"] }
+json = "0.12.4"
