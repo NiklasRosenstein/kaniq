@@ -4,6 +4,8 @@ Kaniq <small>[/ ˈkɑnikju: /]</small> is intended to simplify builds with Googl
 CLI as a standalone executable for use on your local machine as well as from inside a Kaniko container. Prebuilt
 images that embedd the Kaniq CLI are provided at `gcr.io/niklasrosenstein/kaniq`.
 
+  [Kaniko]: https://github.com/GoogleContainerTools/kaniko
+
 __Features__
 
 * Invoke a local Kaniko build without having to remember the long Docker command-line.
@@ -25,10 +27,10 @@ $ cat << EOF > kaniko-entrypoint.sh
 #!/bin/sh
 
 # Log into Artifactory so we can push to it.
-kaniq auth my.jfrog.io $ARTIFACTORY_USER $ARTIFACTORY_PASWORD
+/kaniko/kaniq auth my.jfrog.io $ARTIFACTORY_USER $ARTIFACTORY_PASWORD
 
 # Expose the same credentials to the Docker build as secrets.
-kaniq execute --secret ARTIFACTORY_USER --secret ARTIFACTORY_PASSWORD \
+/kaniko/kaniq execute --secret ARTIFACTORY_USER --secret ARTIFACTORY_PASSWORD \
     --cache=true --cache-copy-layers \
     --destination my.jfrog.io/docker/my-project:latest 
 
