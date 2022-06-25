@@ -23,8 +23,11 @@ jobs:
         username: ${{ github.actor }}
         password: ${{ secrets.GITHUB_TOKEN }}
 
+    - run: echo "::set-output value=$(git describe --tags)"
+      id: git_version
+
     - uses: docker/build-push-action@v3.0.0
       with:
         push: true
         platforms: linux/amd64,linux/arm64
-        tags: ghcr.io/niklasrosenstein/kaniq:latest
+        tags: ghcr.io/niklasrosenstein/kaniq:latest,ghcr.io/niklasrosenstein/kaniq:${{ steps.git_version.value }}
