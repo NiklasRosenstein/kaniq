@@ -6,8 +6,9 @@ static KANIKO_EXECUTOR: &'static str = "/kaniko/executor";
 #[derive(clap::Parser)]
 #[clap(setting = clap::AppSettings::TrailingVarArg)]
 pub struct ExecuteArgs {
-    /// Configure a secret that can be read from the /kaniko/secrets folder. The option
-    /// value must be formatted as SECRET_NAME=VALUE.
+    /// Configure a secret that can be read from the /kaniko/secrets folder. The option value
+    /// must be formatted as 1) `SECRET_NAME=VALUE`, 2) `SECRET`, 3) `SECRET1,SECRET2,SECRET3`.
+    /// The behaviour is identical to that of the `kaniq run --env` option.
     #[clap(long)]
     secret: Vec<String>,
 
@@ -39,15 +40,12 @@ pub fn run(args: ExecuteArgs) {
         std::fs::create_dir(KANIKO_SECRETS_DIR)
             .expect(format!("could not create directory {}", KANIKO_SECRETS_DIR).as_str());
     }
-    args.secret
+    crate::run::parse_env_args(args.secret)
         .iter()
-        .for_each(|secret| match secret.split_once("=") {
-            None => panic!("bad value of --secret option: {}", secret),
-            Some((key, value)) => {
-                let secret_path = std::path::Path::new(KANIKO_SECRETS_DIR).join(key);
-                println!("[kaniq] create secret {:?}", secret_path);
-                std::fs::write(secret_path, value).unwrap();
-            }
+        .for_each(|(key, value)| {
+            let secret_path = std::path::Path::new(KANIKO_SECRETS_DIR).join(key);
+            println!("[kaniq] create secret {:?}", secret_path);
+            std::fs::write(secret_path, value).unwrap();
         });
     let mut command = std::process::Command::new(KANIKO_EXECUTOR);
     command.args(args.argv);

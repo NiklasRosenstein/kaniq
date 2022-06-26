@@ -28,8 +28,7 @@ $ cat << EOF > kaniko-entrypoint.sh
 
 /kaniko/kaniq execute \
     --auth my.jfrog.io $ARTIFACTORY_USER $ARTIFACTORY_PASSWORD \
-    --secret ARTIFACTORY_USER \
-    --secret ARTIFACTORY_PASSWORD \
+    --secret ARTIFACTORY_USER,ARTIFACTORY_PASSWORD \
     --cache=true --cache-copy-layers \
     --destination my.jfrog.io/docker/my-project:latest
 

@@ -31,32 +31,33 @@ pub struct RunArgs {
     argv: Vec<String>,
 }
 
-pub fn run(args: RunArgs) {
-    let env_args: Vec<String> = args
-        .env
-        .iter()
-        .flat_map(|env| -> Vec<String> {
+pub fn parse_env_args(args: Vec<String>) -> std::collections::HashMap<String, String> {
+    args.iter()
+        .flat_map(|env| {
             match env.split_once("=") {
                 // Normal key=value pair.
-                Some((_, _)) => vec!["--env".to_string(), env.clone()],
+                Some((k, v)) => vec![(k.to_string(), v.to_string())],
                 // One or more variable names to export from the current environment.
                 None => env
                     .split(',')
                     .skip_while(|x| x.is_empty())
-                    .flat_map(|key| -> Vec<String> {
-                        vec![
-                            "--env".to_string(),
-                            format!(
-                                "{}={}",
-                                key.clone(),
-                                std::env::var(key)
-                                    .expect(format!("env variable {} is not set", key).as_str())
-                            ),
-                        ]
+                    .flat_map(|key| {
+                        vec![(
+                            key.to_string(),
+                            std::env::var(key)
+                                .expect(format!("env variable '{}' is not set", key).as_str()),
+                        )]
                     })
                     .collect(),
             }
         })
+        .collect()
+}
+
+pub fn run(args: RunArgs) {
+    let env_args: Vec<String> = parse_env_args(args.env)
+        .iter()
+        .flat_map(|(key, value)| vec!["--env".to_string(), format!("{}={}", key, value)])
         .collect();
     let pwd = std::env::current_dir()
         .unwrap()
