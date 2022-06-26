@@ -17,6 +17,9 @@ pub struct AuthArgs {
 }
 
 pub fn run(args: Vec<AuthArgs>) {
+    if args.len() == 0 {
+        return;
+    }
     let mut data = json::parse(
         std::fs::read(KANIKO_DOCKER_CONFIG_FILE)
             .map(|d| String::from_utf8(d).unwrap())
