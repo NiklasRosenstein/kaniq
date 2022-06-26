@@ -12,6 +12,12 @@ pub struct ExecuteArgs {
     #[clap(long)]
     secret: Vec<String>,
 
+    /// Forwards the build arguments to `/kaniko/executor`, but similar to `--secret`, this
+    /// option accepts multiple environment variables names separated by commas to export them
+    /// all as build arguments.
+    #[clap(long)]
+    build_arg: Vec<String>,
+
     /// Set up credentials for a Docker registry. This is a shorthand to using the `kaniq auth` command.
     /// The argument can be specified multiple times.
     #[clap(long, number_of_values = 3, multiple = true)]
@@ -49,6 +55,11 @@ pub fn run(args: ExecuteArgs) {
         });
     let mut command = std::process::Command::new(KANIKO_EXECUTOR);
     command.args(args.argv);
+    crate::run::parse_env_args(args.build_arg)
+        .iter()
+        .for_each(|(key, value)| {
+            command.args(vec!["--env".to_string(), format!("{}={}", key, value)]);
+        });
     if args.verbose {
         println!("[kaniq] executing command {:?}", command);
     }
