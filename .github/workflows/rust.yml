@@ -32,10 +32,12 @@ jobs:
       with: { fetch-depth: 0 }
     - run: rustup target add ${{ matrix.rust_target }}
     - run: |
-        mkdir -p .cargo && cat << EOF > kaniq/.cargo/config.toml
-        [target.arm-linux-androideabi]
+        mkdir -p .cargo
+        cat << EOF > kaniq/.cargo/config.toml
+        [target.${{ matrix.rust_target }}]
         linker = "${{ matrix.rust_target }}-gcc"
         EOF
+        cat kaniq/.cargo/config.toml
     - run: cd kaniq && cargo build --verbose --release --target=${{ matrix.rust_target }} && ls target/release
 
     - run: echo "::set-output name=name::${{ matrix.binary_name }}-$(git describe --tags)"
