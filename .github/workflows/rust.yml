@@ -32,7 +32,7 @@ jobs:
       with: { fetch-depth: 0 }
     - run: rustup target add ${{ matrix.rust_target }}
     - run: |
-        mkdir -p .cargo && cat << EOF > kaniq/.cargo/config
+        mkdir -p .cargo && cat << EOF > kaniq/.cargo/config.toml
         [target.arm-linux-androideabi]
         linker = "${{ matrix.rust_target }}-gcc"
         EOF
