@@ -16,26 +16,31 @@ jobs:
   build:
     strategy:
       matrix:
-        os: [ubuntu-latest, macos-latest]
-    runs-on: ${{ matrix.os }}
+        include:
+          - rust_target: x86_64-apple-darwin
+            binary_name: kaniq-darwin-x86_64
+          - rust_target: aarch64-apple-darwin
+            binary_name: kaniq-darwin-aarch64
+          - rust_target: x86_64-unknown-linux-musl
+            binary_name: kaniq-linux-x86_64
+          - rust_target: aarch64-unknown-linux-musl
+            binary_name: kaniq-linux-aarch64
+
+    runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
-      with:
-        fetch-depth: 0
-    - name: Build
-      run: cd kaniq && cargo build --verbose --release
+      with: { fetch-depth: 0 }
+    - run: rustup target add ${{ matrix.rust_target }}
+    - run: cd kaniq && cargo build --verbose --release --target=${{ matrix.rust_target }} && ls target/release
 
-    - run: echo "::set-output name=value::$(git describe --tags)"
-      id: git_version
-    - run: echo "::set-output name=value::$(uname)-$(arch)"
-      id: os
+    - run: echo "::set-output name=name::${{ matrix.binary_name }}-$(git describe --tags)"
+      id: artifact
 
-    # - name: Run tests
-    #   run: cd kaniq && cargo test --verbose
+    # - : cd kaniq && cargo test --verbose
 
     - uses: actions/upload-artifact@v3.1.0
       with:
-        name: kaniq-${{ steps.os.outputs.value }}-${{ steps.git_version.outputs.value }}
+        name: ${{ steps.artifact.outputs.name }}
         path: kaniq/target/release/kaniq
 
     - uses: svenstaro/upload-release-action@v2
@@ -43,6 +48,6 @@ jobs:
       with:
         repo_token: ${{ secrets.GITHUB_TOKEN }}
         file: kaniq/target/release/kaniq
-        asset_name: kaniq-${{ steps.os.outputs.value }}-${{ steps.git_version.outputs.value }}
+        asset_name: ${{ steps.artifact.outputs.name }}
         tag: ${{ github.ref }}
         overwrite: true
