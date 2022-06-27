@@ -3,7 +3,7 @@ name: Docker Image CI
 on:
   push:
     branches: [ "develop" ]
-    paths: [ ".github/workflows/docker-image.yml", "kaniq", "Dockerfile" ]
+    # paths: [ ".github/workflows/docker-image.yml", "kaniq", "Dockerfile" ]
     tags: [ "*" ]
   pull_request:
     branches: [ "develop" ]
