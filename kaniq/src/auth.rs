@@ -38,7 +38,11 @@ pub fn run(args: Vec<AuthArgs>) -> i32 {
             );
         }
 
-        data[registry] = json::object! {
+        if !data.has_key("auths") {
+            data["auths"] = json::object! {};
+        }
+
+        data["auths"][registry] = json::object! {
             auth: base64::encode(format!("{}:{}", args.username, args.password.as_str())),
         };
     });
