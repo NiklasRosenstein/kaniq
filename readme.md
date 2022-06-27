@@ -30,7 +30,7 @@ __Build status__
     </tr>
         <td>Docker</td>
         <td>
-          <a href="https://github.com/NiklasRosenstein/kaniq/actions/workflows/docker-image.yml"><src img="https://github.com/NiklasRosenstein/kaniq/actions/workflows/docker-image.yml/badge.svg"></a>
+          <a href="https://github.com/NiklasRosenstein/kaniq/actions/workflows/docker-image.yml"><img src="https://github.com/NiklasRosenstein/kaniq/actions/workflows/docker-image.yml/badge.svg"></a>
         </td>
     </tr>
 
