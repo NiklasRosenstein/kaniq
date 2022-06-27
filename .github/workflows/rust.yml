@@ -7,7 +7,7 @@ on:
     tags: [ "*" ]
   pull_request:
     branches: [ "develop" ]
-    # paths: [ ".github/workflows/rust.yml", "kaniq" ]
+    paths: [ ".github/workflows/rust.yml", "kaniq" ]
 
 env:
   CARGO_TERM_COLOR: always
@@ -37,8 +37,8 @@ jobs:
         override: true
 
     - run: |
-      cd kaniq
-      cargo build --verbose --release --target=${{ matrix.rust_target }}
+        cd kaniq
+        cargo build --verbose --release --target=${{ matrix.rust_target }}
 
     - run: echo "::set-output name=name::${{ matrix.binary_name }}-`arch`-$(git describe --tags)"
       id: artifact
