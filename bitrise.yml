@@ -42,7 +42,7 @@ workflows:
             fi
     - deploy-to-bitrise-io@2:
         inputs:
-        - deploy_path: target/release/kaniq
+        - deploy_path: kaniq/target/release/kaniq
 meta:
   bitrise.io:
     stack: osx-xcode-14.0.x
