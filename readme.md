@@ -41,9 +41,9 @@ kaniq run
 
 ```
 mkdir -p /kaniko/.docker
-auth=$(echo -n ${USER}:${PASSWORD} | base64)
+auth=$(echo -n "${USER}:${PASSWORD}" | base64 | tr -d '\n')
 cat << EOF > /kaniko/.docker/config.json
-  {"auths": {"${REGISTRY}": "auth": "${auth}"}}
+  {"auths": {"${REGISTRY}": {"auth": "${auth}"}}}
 EOF
 /kaniko/executor ...
 ```
