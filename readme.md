@@ -12,6 +12,30 @@ __Features__
 * Easily configure Kaniko Docker registry authentication
 * Adds support for secrets
 
+__Build status__
+
+<table>
+    <tr>
+        <th>Apple Silicon</th><td>
+
+[![Build Status](https://app.bitrise.io/app/150d483f5a30bb14/status.svg?token=fdwUoFfzB8XHHaA_04cmDA&branch=master)](https://app.bitrise.io/app/150d483f5a30bb14)
+        </td>
+    <tr>
+    </tr>
+        <th>Linux amd64, macOS Intel</th><td>
+
+[![Rust](https://github.com/NiklasRosenstein/kaniq/actions/workflows/rust.yml/badge.svg)](https://github.com/NiklasRosenstein/kaniq/actions/workflows/rust.yml)
+        </td>
+    <tr>
+    </tr>
+        <th>Docker</th><td>
+
+[![Docker Image CI](https://github.com/NiklasRosenstein/kaniq/actions/workflows/docker-image.yml/badge.svg)](https://github.com/NiklasRosenstein/kaniq/actions/workflows/docker-image.yml)
+        </td>
+    </tr>
+
+</table>
+
 ## Quickstart
 
 Download the Kaniq CLI:
@@ -28,8 +52,7 @@ $ cat << EOF > kaniko-entrypoint.sh
 
 /kaniko/kaniq execute \
     --auth my.jfrog.io $ARTIFACTORY_USER $ARTIFACTORY_PASSWORD \
-    --secret ARTIFACTORY_USER \
-    --secret ARTIFACTORY_PASSWORD \
+    --secret ARTIFACTORY_USER,ARTIFACTORY_PASSWORD \
     --cache=true --cache-copy-layers \
     --destination my.jfrog.io/docker/my-project:latest
 

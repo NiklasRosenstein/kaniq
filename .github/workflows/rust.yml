@@ -7,7 +7,7 @@ on:
     tags: [ "*" ]
   pull_request:
     branches: [ "develop" ]
-    paths: [ ".github/workflows/rust.yml", "kaniq" ]
+    # paths: [ ".github/workflows/rust.yml", "kaniq" ]
 
 env:
   CARGO_TERM_COLOR: always
@@ -15,27 +15,37 @@ env:
 jobs:
   build:
     strategy:
+
       matrix:
-        os: [ubuntu-latest, macos-latest]
+        include:
+          - os: ubuntu-latest
+            binary_name: kaniq-linux
+          - os: macos-latest
+            binary_name: kaniq-darwin
+
     runs-on: ${{ matrix.os }}
+
     steps:
     - uses: actions/checkout@v3
+      with: { fetch-depth: 0 }
+
+    - uses: actions-rs/toolchain@v1
       with:
-        fetch-depth: 0
-    - name: Build
-      run: cd kaniq && cargo build --verbose --release
+        toolchain: stable
+        components: rustfmt
+        profile: minimal
+        override: true
 
-    - run: echo "::set-output name=value::$(git describe --tags)"
-      id: git_version
-    - run: echo "::set-output name=value::$(uname)-$(arch)"
-      id: os
+    - run: |
+      cd kaniq
+      cargo build --verbose --release --target=${{ matrix.rust_target }}
 
-    # - name: Run tests
-    #   run: cd kaniq && cargo test --verbose
+    - run: echo "::set-output name=name::${{ matrix.binary_name }}-`arch`-$(git describe --tags)"
+      id: artifact
 
     - uses: actions/upload-artifact@v3.1.0
       with:
-        name: kaniq-${{ steps.os.outputs.value }}-${{ steps.git_version.outputs.value }}
+        name: ${{ steps.artifact.outputs.name }}
         path: kaniq/target/release/kaniq
 
     - uses: svenstaro/upload-release-action@v2
@@ -43,6 +53,6 @@ jobs:
       with:
         repo_token: ${{ secrets.GITHUB_TOKEN }}
         file: kaniq/target/release/kaniq
-        asset_name: kaniq-${{ steps.os.outputs.value }}-${{ steps.git_version.outputs.value }}
+        asset_name: ${{ steps.artifact.outputs.name }}
         tag: ${{ github.ref }}
         overwrite: true
