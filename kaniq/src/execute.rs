@@ -31,7 +31,7 @@ pub struct ExecuteArgs {
     argv: Vec<String>,
 }
 
-pub fn run(args: ExecuteArgs) {
+pub fn run(args: ExecuteArgs) -> i32 {
     crate::auth::run(
         args.auth
             .chunks(3)
@@ -63,9 +63,5 @@ pub fn run(args: ExecuteArgs) {
     if args.verbose {
         println!("[kaniq execute] executing command {:?}", command);
     }
-    command
-        .spawn()
-        .expect("failed to spawn kaniko executor")
-        .wait()
-        .expect("kaniko executor failed");
+    command.spawn().unwrap().wait().unwrap().code().unwrap()
 }

@@ -54,7 +54,7 @@ pub fn parse_env_args(args: Vec<String>) -> std::collections::HashMap<String, St
         .collect()
 }
 
-pub fn run(args: RunArgs) {
+pub fn run(args: RunArgs) -> i32 {
     let env_args: Vec<String> = parse_env_args(args.env)
         .iter()
         .flat_map(|(key, value)| vec!["--env".to_string(), format!("{}={}", key, value)])
@@ -79,9 +79,5 @@ pub fn run(args: RunArgs) {
     if args.verbose {
         println!("[kaniq run    ] executing command {:?}", command)
     }
-    command
-        .spawn()
-        .expect("failed to spawn docker command")
-        .wait()
-        .expect("kaniko container failed");
+    command.spawn().unwrap().wait().unwrap().code().unwrap()
 }

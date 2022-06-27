@@ -23,13 +23,13 @@ enum Action {
 fn main() {
     match Args::parse().action {
         Action::Auth(args) => {
-            auth::run(vec![args]);
+            std::process::exit(auth::run(vec![args]));
         }
         Action::Execute(args) => {
-            execute::run(args);
+            std::process::exit(execute::run(args));
         }
         Action::Run(args) => {
-            run::run(args);
+            std::process::exit(run::run(args));
         }
     }
 }

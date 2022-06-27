@@ -16,9 +16,9 @@ pub struct AuthArgs {
     pub password: String,
 }
 
-pub fn run(args: Vec<AuthArgs>) {
+pub fn run(args: Vec<AuthArgs>) -> i32 {
     if args.len() == 0 {
-        return;
+        return 0;
     }
     let mut data = json::parse(
         std::fs::read(KANIKO_DOCKER_CONFIG_FILE)
@@ -46,4 +46,5 @@ pub fn run(args: Vec<AuthArgs>) {
     println!("[kaniq auth   ] write {}", KANIKO_DOCKER_CONFIG_FILE);
     std::fs::write(KANIKO_DOCKER_CONFIG_FILE, data.dump())
         .expect(format!("unable to write to file {}", KANIKO_DOCKER_CONFIG_FILE).as_str());
+    return 0;
 }
