@@ -38,6 +38,7 @@ jobs:
 
     - run: |
         cd kaniq
+        ../bin/update-crate-version $(git describe --tags)
         cargo build --verbose --release
 
     - run: echo "::set-output name=name::${{ matrix.binary_name }}-`arch`-$(git describe --tags)"
