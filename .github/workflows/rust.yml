@@ -7,7 +7,7 @@ on:
     tags: [ "*" ]
   pull_request:
     branches: [ "develop" ]
-    paths: [ ".github/workflows/rust.yml", "kaniq" ]
+    paths: [ "kaniq" ]
 
 env:
   CARGO_TERM_COLOR: always
