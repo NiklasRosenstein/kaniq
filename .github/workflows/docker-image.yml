@@ -29,7 +29,17 @@ jobs:
     - run: echo "::set-output name=value::$(git describe --tags)"
       id: git_version
 
-    - uses: docker/build-push-action@v3.0.0
+    - name: Build
+      uses: docker/build-push-action@v3.0.0
+      if: "!startsWith(github.ref, 'refs/tags/')"
+      with:
+        push: false
+        cache-to: type=registry,ref=ghcr.io/niklasrosenstein/kaniq:_cache
+        cache-from: type=registry,ref=ghcr.io/niklasrosenstein/kaniq:_cache
+        platforms: linux/amd64,linux/arm64
+
+    - name: Build and push
+      uses: docker/build-push-action@v3.0.0
       if: startsWith(github.ref, 'refs/tags/')
       with:
         push: true
