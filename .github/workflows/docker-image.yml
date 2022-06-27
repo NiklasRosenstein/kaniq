@@ -29,16 +29,27 @@ jobs:
     - run: echo "::set-output name=value::$(git describe --tags)"
       id: git_version
 
-    - name: Build
+    - name: Build and push (snapshot)
       uses: docker/build-push-action@v3.0.0
-      if: "!startsWith(github.ref, 'refs/tags/')"
+      if: "!startsWith(github.ref, 'refs/head/develop') && !startsWith(github.ref, 'refs/tags/')"
       with:
-        push: false
+        push: true
         cache-to: type=registry,ref=ghcr.io/niklasrosenstein/kaniq:_cache
         cache-from: type=registry,ref=ghcr.io/niklasrosenstein/kaniq:_cache
         platforms: linux/amd64,linux/arm64
+        tags: ghcr.io/niklasrosenstein/kaniq:${{ steps.git_version.outputs.value }}
 
-    - name: Build and push
+    - name: Build and push (develop)
+      uses: docker/build-push-action@v3.0.0
+      if: startsWith(github.ref, 'refs/head/develop')
+      with:
+        push: true
+        cache-to: type=registry,ref=ghcr.io/niklasrosenstein/kaniq:_cache
+        cache-from: type=registry,ref=ghcr.io/niklasrosenstein/kaniq:_cache
+        platforms: linux/amd64,linux/arm64
+        tags: ghcr.io/niklasrosenstein/kaniq:develop,ghcr.io/niklasrosenstein/kaniq:${{ steps.git_version.outputs.value }}
+
+    - name: Build and push (latest)
       uses: docker/build-push-action@v3.0.0
       if: startsWith(github.ref, 'refs/tags/')
       with:
