@@ -16,21 +16,21 @@ __Build status__
 
 <table>
     <tr>
-        <th>Apple Silicon</th><td>
-
-[![Build Status](https://app.bitrise.io/app/150d483f5a30bb14/status.svg?token=fdwUoFfzB8XHHaA_04cmDA&branch=master)](https://app.bitrise.io/app/150d483f5a30bb14)
+        <td>Apple Silicon</th>
+        <td>
+          <a href="https://app.bitrise.io/app/150d483f5a30bb14"><img src="https://app.bitrise.io/app/150d483f5a30bb14/status.svg?token=fdwUoFfzB8XHHaA_04cmDA&branch=master"></a>
         </td>
     <tr>
     </tr>
-        <th>Linux amd64, macOS Intel</th><td>
-
-[![Rust](https://github.com/NiklasRosenstein/kaniq/actions/workflows/rust.yml/badge.svg)](https://github.com/NiklasRosenstein/kaniq/actions/workflows/rust.yml)
+        <td>Linux amd64, macOS Intel</td>
+        <td>
+          <a href="https://github.com/NiklasRosenstein/kaniq/actions/workflows/rust.yml"><img src="https://github.com/NiklasRosenstein/kaniq/actions/workflows/rust.yml/badge.svg"></a>
         </td>
     <tr>
     </tr>
-        <th>Docker</th><td>
-
-[![Docker Image CI](https://github.com/NiklasRosenstein/kaniq/actions/workflows/docker-image.yml/badge.svg)](https://github.com/NiklasRosenstein/kaniq/actions/workflows/docker-image.yml)
+        <td>Docker</td>
+        <td>
+          <a href="https://github.com/NiklasRosenstein/kaniq/actions/workflows/docker-image.yml"><src img="https://github.com/NiklasRosenstein/kaniq/actions/workflows/docker-image.yml/badge.svg"></a>
         </td>
     </tr>
 
