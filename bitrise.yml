@@ -19,7 +19,9 @@ workflows:
             #!/usr/bin/env bash
             set -exuo pipefail
 
-            cd kaniq && cargo build --release
+            cd kaniq
+            ../bin/update-crate-version.sh $(git describe --tags)
+            cargo build --release
 
             function gh-curl() {
               curl -v --fail-with-body -H "Accept: application/vnd.github.v3+json" -H "Authorization: token $GITHUB_TOKEN" "$@"
