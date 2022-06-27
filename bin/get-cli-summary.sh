@@ -2,25 +2,25 @@
 
 cd kaniq
 
-echo '### `kaniku`'
+echo '### `kaniq`'
 echo '```'
 cargo run -q help
 echo '```'
 echo
 
-echo '### `kaniku execute`'
+echo '### `kaniq execute`'
 echo '```'
 cargo run -q help execute
 echo '```'
 echo
 
-echo '### `kaniku config`'
+echo '### `kaniq config`'
 echo '```'
 cargo run -q help config
 echo '```'
 echo
 
-echo '### `kaniku local`'
+echo '### `kaniq local`'
 echo '```'
 cargo run -q help local
 echo '```'

@@ -5,7 +5,7 @@ static KANIKO_IMAGE: &'static str = "ghcr.io/niklasrosenstein/kaniq:latest";
 /// into the container, but remember that they will still need to be fed into the
 /// Kaniko executor as build args or secrets.
 ///
-/// This is the only Kaniku command that is expected to be called outside of a
+/// This is the only kaniq command that is expected to be called outside of a
 /// Kaniko container.
 #[derive(clap::Parser)]
 #[clap(setting = clap::AppSettings::TrailingVarArg)]

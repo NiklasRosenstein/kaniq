@@ -5,7 +5,7 @@ COPY kaniq/ ./
 ENV CARGO_HOME /root/.cargo
 RUN --mount=type=cache,dst=/root/.cargo/ --mount=type=cache,dst=./target/ : \
     && time cargo build --release \
-    && cp target/release/kaniq /usr/local/bin/kaniku
+    && cp target/release/kaniq /usr/local/bin/kaniq
 
-FROM gcr.io/kaniko-project/executor:debug as kaniku
-COPY --from=kaniq /usr/local/bin/kaniku /kaniko/kaniku
+FROM gcr.io/kaniko-project/executor:debug as kaniq
+COPY --from=kaniq /usr/local/bin/kaniq /kaniko/kaniq
