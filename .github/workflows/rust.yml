@@ -38,7 +38,7 @@ jobs:
 
     - run: |
         cd kaniq
-        cargo build --verbose --release --target=${{ matrix.rust_target }}
+        cargo build --verbose --release
 
     - run: echo "::set-output name=name::${{ matrix.binary_name }}-`arch`-$(git describe --tags)"
       id: artifact
