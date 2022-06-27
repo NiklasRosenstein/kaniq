@@ -15,18 +15,16 @@ env:
 jobs:
   build:
     strategy:
+
       matrix:
         include:
-          - rust_target: x86_64-apple-darwin
-            binary_name: kaniq-darwin-x86_64
-          - rust_target: aarch64-apple-darwin
-            binary_name: kaniq-darwin-aarch64
-          - rust_target: x86_64-unknown-linux-musl
+          - os: ubuntu-latest
             binary_name: kaniq-linux-x86_64
-          - rust_target: aarch64-unknown-linux-musl
-            binary_name: kaniq-linux-aarch64
+          - os: macos-latest
+            binary_name: kaniq-darwin-x86_64
 
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.os }}
+
     steps:
     - uses: actions/checkout@v3
       with: { fetch-depth: 0 }
@@ -37,24 +35,13 @@ jobs:
         components: rustfmt
         profile: minimal
         override: true
-        target: ${{ matrix.rust_target }}
 
-    # - run: rustup target add ${{ matrix.rust_target }}
-    # - run: |
-    #     cd kaniq
-    #     mkdir -p .cargo
-    #     cat << EOF > .cargo/config.toml
-    #     [target.${{ matrix.rust_target }}]
-    #     linker = "${{ matrix.rust_target }}-gcc"
-    #     EOF
-    #     cat .cargo/config.toml
-
-    - run: cd kaniq && cargo build --verbose --release --target=${{ matrix.rust_target }} && ls target/release
+    - run: |
+      cd kaniq
+      cargo build --verbose --release --target=${{ matrix.rust_target }}
 
     - run: echo "::set-output name=name::${{ matrix.binary_name }}-$(git describe --tags)"
       id: artifact
-
-    # - : cd kaniq && cargo test --verbose
 
     - uses: actions/upload-artifact@v3.1.0
       with:

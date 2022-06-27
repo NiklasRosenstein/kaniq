@@ -1,0 +1,57 @@
+---
+format_version: '11'
+default_step_lib_source: https://github.com/bitrise-io/bitrise-steplib.git
+project_type: other
+trigger_map:
+- push_branch: "*"
+  workflow: primary
+- pull_request_target_branch: "*"
+  pull_request_source_branch: "*"
+  workflow: primary
+- tag: "*"
+  workflow: primary
+workflows:
+  primary:
+    steps:
+    - activate-ssh-key@4:
+        run_if: '{{getenv "SSH_RSA_PRIVATE_KEY" | ne ""}}'
+    - git-clone@6: {}
+    - brew-install@0:
+        inputs:
+        - cache_enabled: 'yes'
+        - packages: rust
+    - script@1:
+        title: Do anything with Script step
+        inputs:
+        - content: |-
+          #!/usr/bin/env bash
+          set -exuo pipefail
+          cd kaniq && cargo build --release
+
+          # TODO: Remove
+          BITRISE_GIT_TAG=0.1.1
+
+
+          function gh-curl() {
+            curl -v --fail-with-body -H "Accept: application/vnd.github.v3+json" -H "Authorization: token $GITHUB_TOKEN" "$@"
+          }
+
+
+          if [ "$BITRISE_GIT_TAG" != "" ]; then
+
+            # Get the release by tag name.
+            release_id=$(gh-curl "https://api.github.com/repos/NiklasRosenstein/kaniq/releases/tags/$BITRISE_GIT_TAG" | jq .id)
+
+            # Upload the file to the release.
+            gh-curl -X POST "https://uploads.github.com/repos/NiklasRosenstein/kaniq/releases/$release_id/assets?name=kaniq-darwin-aarch64-$BITRISE_GIT_TAG" \
+              --header 'Content-Type: application/octet-stream' \
+              --upload-file target/release/kaniq
+
+          fi
+    - deploy-to-bitrise-io@2:
+        inputs:
+        - deploy_path: target/release/kaniq
+meta:
+  bitrise.io:
+    stack: osx-xcode-14.0.x
+    machine_type_id: g2-m1.8core
