@@ -3,11 +3,11 @@ name: Rust
 on:
   push:
     branches: [ "develop" ]
-    paths: [ ".github/workflows/rust.yml", "kaniq/**" ]
+    paths: [ ".github/workflows/ci.yml", "kaniq/**" ]
     tags: [ "*" ]
   pull_request:
     branches: [ "develop" ]
-    paths: [ ".github/workflows/rust.yml", "kaniq/**" ]
+    paths: [ ".github/workflows/ci.yml", "kaniq/**" ]
 
 env:
   CARGO_TERM_COLOR: always
