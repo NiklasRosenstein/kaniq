@@ -1,27 +1,29 @@
 #!/bin/bash
 
+set -euo pipefail
+
 cd kaniq
 
 echo '### `kaniq`'
 echo '```'
-cargo run -q help
+cargo run -q -- -h
+echo '```'
+echo
+
+echo '### `kaniq auth`'
+echo '```'
+cargo run -q auth -h
 echo '```'
 echo
 
 echo '### `kaniq execute`'
 echo '```'
-cargo run -q help execute
+cargo run -q execute -h
 echo '```'
 echo
 
-echo '### `kaniq config`'
+echo '### `kaniq run`'
 echo '```'
-cargo run -q help config
-echo '```'
-echo
-
-echo '### `kaniq local`'
-echo '```'
-cargo run -q help local
+cargo run -q run -h
 echo '```'
 echo

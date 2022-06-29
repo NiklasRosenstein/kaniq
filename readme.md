@@ -2,7 +2,6 @@
 
 <a href="https://github.com/NiklasRosenstein/kaniq/actions/workflows/rust.yml"><img src="https://github.com/NiklasRosenstein/kaniq/actions/workflows/rust.yml/badge.svg"></a>
 <a href="https://github.com/NiklasRosenstein/kaniq/actions/workflows/docker-image.yml"><img src="https://github.com/NiklasRosenstein/kaniq/actions/workflows/docker-image.yml/badge.svg"></a>
-<a href="https://app.bitrise.io/app/150d483f5a30bb14"><img src="https://app.bitrise.io/app/150d483f5a30bb14/status.svg?token=fdwUoFfzB8XHHaA_04cmDA&branch=master"></a>
 
 Kaniq <small>[/ ˈkɑnikju: /]</small> is intended to simplify builds with Google's [Kaniko]. It provides the `kaniq`
 CLI as a standalone executable for use on your local machine as well as from inside a Kaniko container. Prebuilt

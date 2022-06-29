@@ -1,0 +1,94 @@
+name: Rust
+
+on:
+  push:
+    branches: [ "develop" ]
+    paths: [ ".github/workflows/rust.yml", "kaniq/**" ]
+    tags: [ "*" ]
+  pull_request:
+    branches: [ "develop" ]
+    paths: [ ".github/workflows/rust.yml", "kaniq/**" ]
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+
+  build_docker:
+    runs-on: ubuntu-latest
+    steps:
+
+    - uses: actions/checkout@v3
+      with:
+        fetch-depth: 0
+    - uses: docker/setup-qemu-action@v2
+    - uses: docker/setup-buildx-action@v2
+    - uses: docker/login-action@v2
+      with:
+        registry: ghcr.io
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+
+    - run: echo "::set-output name=value::$(git describe --tags)"
+      id: git_version
+
+    - run: |
+        TAGS="ghcr.io/niklasrosenstein/kaniq:${{ steps.git_version.outputs.value }}"
+        echo "::set-output name=sha::$TAGS"
+        case "${{ github.ref }}" in
+          refs/heads/develop)
+            TAGS="$TAGS,ghcr.io/niklasrosenstein/kaniq:develop" ;;
+          refs/tags/*)
+            TAGS="$TAGS,ghcr.io/niklasrosenstein/kaniq:latest" ;;
+          *)
+            >&2 echo "error: invalid Github ref: ${{ github.ref }}"
+            exit 1 ;;
+        esac
+        echo "::set-output name=all::$TAGS"
+      id: docker_tags
+
+    - name: Build and push
+      uses: docker/build-push-action@v3.0.0
+      with:
+        push: true
+        build-args: GIT_VERSION=${{ steps.git_version.outputs.value }}
+        cache-to: type=registry,ref=ghcr.io/niklasrosenstein/kaniq:_cache
+        cache-from: type=registry,ref=ghcr.io/niklasrosenstein/kaniq:_cache
+        platforms: linux/amd64,linux/arm64
+        tags: ${{ steps.docker_tags.outputs.all }}
+
+    - name: Extract binaries from image
+      run: |
+        for arch in amd64 arm64; do
+          id=$(docker create --platform linux/$arch ${{ steps.docker_tags.outputs.sha }})
+          docker cp $id:/usr/local/bin/kaniq - > kaniq-linux-$arch-${{ steps.git_version.outputs.value }}
+          docker rm -v $id
+        done
+
+    - uses: actions/upload-artifact@v3.1.0
+      with:
+        name: ${{ steps.artifact.outputs.name }}
+        path: kaniq-linux-amd64-${{ steps.git_version.outputs.value }}
+
+    - uses: actions/upload-artifact@v3.1.0
+      with:
+        name: ${{ steps.artifact.outputs.name }}
+        path: kaniq-linux-arm64-${{ steps.git_version.outputs.value }}
+
+    - uses: svenstaro/upload-release-action@v2
+      if: startsWith(github.ref, 'refs/tags/')
+      with:
+        repo_token: ${{ secrets.GITHUB_TOKEN }}
+        file: kaniq-linux-amd64-${{ steps.git_version.outputs.value }}
+        asset_name: ${{ steps.artifact.outputs.name }}
+        tag: ${{ github.ref }}
+        overwrite: true
+
+    - uses: svenstaro/upload-release-action@v2
+      if: startsWith(github.ref, 'refs/tags/')
+      with:
+        repo_token: ${{ secrets.GITHUB_TOKEN }}
+        file: kaniq-linux-arm64-${{ steps.git_version.outputs.value }}
+        asset_name: ${{ steps.artifact.outputs.name }}
+        tag: ${{ github.ref }}
+        overwrite: true
