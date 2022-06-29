@@ -61,7 +61,7 @@ jobs:
       run: |
         for arch in amd64 arm64; do
           id=$(docker create --platform linux/$arch ${{ steps.docker_tags.outputs.sha }})
-          docker cp $id:/usr/local/bin/kaniq - > kaniq-linux-$arch-${{ steps.git_version.outputs.value }}
+          docker cp $id:/kaniko/kaniq - > kaniq-linux-$arch-${{ steps.git_version.outputs.value }}
           docker rm -v $id
         done
 
