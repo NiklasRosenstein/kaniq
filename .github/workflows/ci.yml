@@ -64,6 +64,7 @@ jobs:
           docker cp $id:/kaniko/kaniq - > kaniq-linux-$arch-${{ steps.git_version.outputs.value }}
           docker rm -v $id
         done
+        ls -l
 
     - uses: actions/upload-artifact@v3.1.0
       with:
