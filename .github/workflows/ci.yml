@@ -68,12 +68,12 @@ jobs:
 
     - uses: actions/upload-artifact@v3.1.0
       with:
-        name: ${{ steps.artifact.outputs.name }}
+        name: kaniq-linux-amd64-${{ steps.git_version.outputs.value }}
         path: kaniq-linux-amd64-${{ steps.git_version.outputs.value }}
 
     - uses: actions/upload-artifact@v3.1.0
       with:
-        name: ${{ steps.artifact.outputs.name }}
+        name: kaniq-linux-arm64-${{ steps.git_version.outputs.value }}
         path: kaniq-linux-arm64-${{ steps.git_version.outputs.value }}
 
     - uses: svenstaro/upload-release-action@v2
@@ -81,7 +81,7 @@ jobs:
       with:
         repo_token: ${{ secrets.GITHUB_TOKEN }}
         file: kaniq-linux-amd64-${{ steps.git_version.outputs.value }}
-        asset_name: ${{ steps.artifact.outputs.name }}
+        asset_name: kaniq-linux-amd64-${{ steps.git_version.outputs.value }}
         tag: ${{ github.ref }}
         overwrite: true
 
@@ -90,6 +90,6 @@ jobs:
       with:
         repo_token: ${{ secrets.GITHUB_TOKEN }}
         file: kaniq-linux-arm64-${{ steps.git_version.outputs.value }}
-        asset_name: ${{ steps.artifact.outputs.name }}
+        asset_name: kaniq-linux-arm64-${{ steps.git_version.outputs.value }}
         tag: ${{ github.ref }}
         overwrite: true
